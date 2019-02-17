@@ -1,10 +1,16 @@
 package com.rekik.riri_restfulwebservices;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class User {
-	private Integer idInteger; 
+	private Integer idInteger;
+
+	@Size(min=2, message = "Name should at least have two characters")
 	private String nameString;
+
+	@Past
 	private java.util.Date birthDate;
 	
 
