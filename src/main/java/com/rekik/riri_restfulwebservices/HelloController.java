@@ -1,9 +1,6 @@
 package com.rekik.riri_restfulwebservices;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HelloController {
@@ -13,7 +10,10 @@ public class HelloController {
 	public String helloWorld(@PathVariable String name) {
 		return "Hi there "+name;
 	}
-	
-	
+
+	@RequestMapping(method=RequestMethod.GET, value="/helloIntl")
+	public String helloWorldInternationalization(@PathVariable String name) {
+		return "Good Morning";
+	}
 
 }

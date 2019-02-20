@@ -38,7 +38,8 @@ extends ResponseEntityExceptionHandler{
                 return new ResponseEntity(exceptionResponse,HttpStatus.NOT_FOUND);
     }
 
-    /*ex - the exception
+    /**
+     *ex - the exception
     headers - the headers to be written to the response
     status - the selected response status
     request - the current request*/

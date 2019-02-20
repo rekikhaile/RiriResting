@@ -5,7 +5,10 @@ import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,11 +29,22 @@ public class UserResource {
 	}
 
 	@GetMapping("/users/{id}")
-	public User retrieveUser(@PathVariable int id) {
+	//public User retrieveUser(@PathVariable int id) {
+	public Resource<User> retrieveUser(@PathVariable int id) {
+
 		User user = service.findOne(id);
 		if(user==null)
 			throw new UserNotFoundException("id -"+id);
-		return service.findOne(id);
+
+		//you can also tell way to find "all-users" with HATEOAS - links using the methods e.g retrieveAllUsers
+		//"all-users", SERVER_PATH + "/users"
+
+		Resource<User> resource = new Resource<User>(user);
+		ControllerLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+
+		resource.add(linkTo.withRel("all-users"));
+		//return user;
+		return resource;
 	}
 
 	@PostMapping("/users")
