@@ -1,5 +1,7 @@
 package com.rekik.riri_restfulwebservices;
 
+import com.rekik.riri_restfulwebservices.exception.ExceptionResponse;
+import com.rekik.riri_restfulwebservices.exception.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

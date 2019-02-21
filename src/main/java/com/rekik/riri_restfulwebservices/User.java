@@ -1,10 +1,17 @@
 package com.rekik.riri_restfulwebservices;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+@Entity
 public class User {
+
+	@Id
+	@GeneratedValue
 	private Integer idInteger;
 
 	@Size(min=2, message = "Name should at least have two characters")

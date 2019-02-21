@@ -1,11 +1,7 @@
 package com.rekik.riri_restfulwebservices;
 
-import java.net.URI;
-import java.util.List;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
-
 import com.rekik.riri_restfulwebservices.exception.UserNotFoundException;
+import com.rekik.riri_restfulwebservices.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -14,32 +10,45 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 
 @RestController
-public class UserResource {
+public class UserJPAResource {
 
 	@Autowired
 	private UserDaoService service;
 
-	@GetMapping("/users")
+	@Autowired
+	private UserRepository userRepository;
+
+	@GetMapping("/jpa/users")
 	public List<User> retrieveAllUsers() {
 
-		return service.findAll();
+		//return service.findAll();
+		return userRepository.findAll();
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("/jpa/users/{id}")
 	//public User retrieveUser(@PathVariable int id) {
 	public Resource<User> retrieveUser(@PathVariable int id) {
 
-		User user = service.findOne(id);
-		if(user==null)
+		//User user = userRepository.findById(id).get();
+		Optional<User> user = userRepository.findById(id);
+
+		//if(user==null)
+		if(!user.isPresent())
 			throw new UserNotFoundException("id -"+id);
 
 		//you can also tell way to find "all-users" with HATEOAS - links using the methods e.g retrieveAllUsers
 		//"all-users", SERVER_PATH + "/users"
 
-		Resource<User> resource = new Resource<User>(user);
+		Resource<User> resource = new Resource<User>(user.get());
 		ControllerLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
 
 		resource.add(linkTo.withRel("all-users"));
@@ -47,7 +56,7 @@ public class UserResource {
 		return resource;
 	}
 
-	@PostMapping("/users")
+	@PostMapping("/jpa/users")
 	public ResponseEntity createUser(@Valid @RequestBody User user) {
 
 		User savedUser = service.save(user);
@@ -67,7 +76,7 @@ public class UserResource {
 	}
 
 
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping("/jpa/users/{id}")
 	public void deleteUser(@PathVariable int id) {
 		User user = service.deleteById(id);
 		if(user==null)

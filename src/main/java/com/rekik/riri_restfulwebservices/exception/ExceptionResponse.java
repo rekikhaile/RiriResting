@@ -1,4 +1,4 @@
-package com.rekik.riri_restfulwebservices;
+package com.rekik.riri_restfulwebservices.exception;
 
 import java.util.Date;
 
