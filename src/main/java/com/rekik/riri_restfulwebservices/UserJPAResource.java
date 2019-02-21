@@ -21,8 +21,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 public class UserJPAResource {
 
+	/*
+	 * @Autowired private UserDaoService service;
+	 */
+	
 	@Autowired
-	private UserDaoService service;
+	private PostRepository postRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -59,7 +63,7 @@ public class UserJPAResource {
 	@PostMapping("/jpa/users")
 	public ResponseEntity createUser(@Valid @RequestBody User user) {
 
-		User savedUser = service.save(user);
+		User savedUser = userRepository.save(user);
 		//status of the created
 		// how to set the uri of the created resource into the response
 
@@ -75,12 +79,45 @@ public class UserJPAResource {
 
 	}
 
+	@GetMapping("/jpa/users/{id}/posts")
+	public List<Post> retrieveAllPostsForaUser(
+			@PathVariable int id) {
+		
+		Optional<User> userOptional = userRepository.findById(id);
+		if(!userOptional.isPresent())
+			throw new UserNotFoundException("id-"+id);
+		return userOptional.get().getPosts();
+	}
+	
+	@PostMapping("/jpa/users/{id}/posts")
+	public ResponseEntity createPosts(@PathVariable int id, @RequestBody Post post) {
+
+		Optional<User> userOptional = userRepository.findById(id);
+		if(!userOptional.isPresent())
+			throw new UserNotFoundException("id-"+id);
+		
+		
+		User user = userOptional.get();
+		
+		post.setUser(user);
+		
+		postRepository.save(post);
+		
+		URI location = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+				.path("/{id}")
+				.buildAndExpand(post.getId())
+				.toUri();
+
+		return ResponseEntity.created(location).build();
+
+
+	}
+	
 
 	@DeleteMapping("/jpa/users/{id}")
 	public void deleteUser(@PathVariable int id) {
-		User user = service.deleteById(id);
-		if(user==null)
-			throw new UserNotFoundException("id -"+id);
+		userRepository.deleteById(id);
 	}
 
 
